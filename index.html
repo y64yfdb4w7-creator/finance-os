@@ -452,12 +452,13 @@
     .ev-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 30px; }
     .ev-item {
       display: flex;
-      align-items: center;
-      gap: 14px;
+      align-items: flex-start;
+      gap: 10px;
       padding: 11px 14px;
       background: var(--surface);
       border-radius: 9px;
       border-left: 2px solid var(--border);
+      overflow: hidden;
     }
     .ev-item.dividend { border-left-color: var(--green); }
     .ev-item.purchase { border-left-color: var(--red); }
@@ -470,12 +471,12 @@
     .ev-title {
       font-size: 13px;
       flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      white-space: normal;
       min-width: 0;
     }
-    .ev-amt { font-family: var(--mono); font-size: 13px; color: var(--gold); margin-left: auto; white-space: nowrap; }
+    .ev-amt { font-family: var(--mono); font-size: 12px; color: var(--gold); white-space: nowrap; flex-shrink: 0; }
 
     .ev-year-header {
       font-size: 10px;
