@@ -677,18 +677,17 @@ const DB = {
 
   async init() {
     return new Promise((res, rej) => {
-      const r = indexedDB.open('FinanceOS_2', 1);
+      const DB_NAME    = 'FinanceOS';
+      const DB_VERSION = 10; // jump high — avoids legacy version conflicts
+      const r = indexedDB.open(DB_NAME, DB_VERSION);
+
       r.onblocked = () => {
-        document.getElementById('db-content').innerHTML = `
-          <div class="empty">
-            <div class="empty-icon">⚠️</div>
-            <div class="empty-title">Sulje muut Finance OS -välilehdet</div>
-            <p style="color:var(--text2);margin-bottom:16px;">Tietokantapäivitys on estetty — sulje muut välilehdet ja päivitä sivu (Cmd+R).</p>
-            <button class="btn-p" onclick="location.reload()">Päivitä sivu</button>
-          </div>`;
+        alert('Finance OS on auki toisessa välilehdessä. Sulje vanhat välilehdet ja päivitä sivu.');
       };
+
       r.onupgradeneeded = e => {
         const db = e.target.result;
+        // Additive only — never delete existing stores
         if (!db.objectStoreNames.contains('snapshots')) {
           db.createObjectStore('snapshots', { keyPath: 'date' });
         }
@@ -700,7 +699,14 @@ const DB = {
           db.createObjectStore('holdings', { keyPath: 'id', autoIncrement: true });
         }
       };
-      r.onsuccess = e => { this.db = e.target.result; res(); };
+      r.onsuccess = e => {
+        this.db = e.target.result;
+        this.db.onversionchange = () => {
+          this.db.close();
+          alert('Sovellus on päivitetty. Päivitä sivu jatkaaksesi.');
+        };
+        res();
+      };
       r.onerror = e => rej(e.target.error);
     });
   },
@@ -763,10 +769,11 @@ const DB = {
 
   async clear() {
     return new Promise((res, rej) => {
-      const tx = this.db.transaction(['snapshots', 'events', 'holdings'], 'readwrite');
-      tx.objectStore('snapshots').clear();
-      tx.objectStore('events').clear();
-      tx.objectStore('holdings').clear();
+      const stores = ['snapshots','events','holdings'].filter(
+        s => this.db.objectStoreNames.contains(s)
+      );
+      const tx = this.db.transaction(stores, 'readwrite');
+      stores.forEach(s => tx.objectStore(s).clear());
       tx.oncomplete = res;
       tx.onerror = e => rej(e.target.error);
     });
