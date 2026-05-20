@@ -454,18 +454,15 @@
       flex-direction: column;
       gap: 6px;
       margin-bottom: 30px;
-      width: 100%;
-      min-width: 0;
     }
     .ev-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 11px 14px;
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 8px;
+      padding: 10px 14px;
       background: var(--surface);
       border-radius: 9px;
       border-left: 2px solid var(--border);
-      min-width: 0;
       width: 100%;
       box-sizing: border-box;
     }
@@ -474,13 +471,20 @@
     .ev-item.sale     { border-left-color: var(--blue); }
     .ev-item.transfer { border-left-color: var(--gold-dim); }
     .ev-item.note     { border-left-color: var(--text3); }
-    .ev-meta { flex-shrink: 0; width: 88px; }
+    .ev-meta { min-width: 0; }
     .ev-date { font-family: var(--mono); font-size: 11px; color: var(--text2); }
     .ev-src  { font-size: 10px; color: var(--text3); margin-top: 1px; }
+    .ev-body {
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
     .ev-title {
       font-size: 13px;
-      flex: 1;
-      min-width: 0;
+      color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -488,15 +492,18 @@
     .ev-note-text {
       font-size: 13px;
       color: var(--text);
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      white-space: pre-wrap;
-      flex: 1 1 0;
-      min-width: 0;
-      max-width: 100%;
       line-height: 1.5;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      white-space: normal;
+      max-width: 100%;
+      min-width: 0;
     }
-    .ev-amt { font-family: var(--mono); font-size: 12px; color: var(--gold); white-space: nowrap; flex-shrink: 0; }
+    .ev-amt {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--gold);
+    }
 
     .ev-year-header {
       font-size: 10px;
@@ -1650,13 +1657,14 @@ async function renderDashboard() {
         <div class="ev-item ${ev.type}">
           <div class="ev-meta">
             <div class="ev-date">${fmtDate(ev.date)}</div>
-            <div class="ev-src">${ev.source || ev.type}</div>
+            <div class="ev-src">${ev.source || ''}</div>
           </div>
-          ${ev.note && ev.amount === null
-            ? `<div class="ev-note-text">${ev.note}</div>`
-            : `<div class="ev-title">${ev.title}</div>
-               <div class="ev-amt">${ev.amount !== null ? fmt(ev.amount) : '—'}</div>`
-          }
+          <div class="ev-body">
+            ${ev.note
+              ? `<div class="ev-note-text">${ev.note}</div>`
+              : `<div class="ev-title">${ev.title}</div>`}
+            ${ev.amount !== null ? `<div class="ev-amt">${fmt(ev.amount)}</div>` : ''}
+          </div>
         </div>`).join('')}
     </div>` : ''}
   `;
@@ -2081,8 +2089,12 @@ async function renderEvents() {
                 <div class="ev-date">${fmtDate(ev.date)}</div>
                 <div class="ev-src">${ev.source || ''}</div>
               </div>
-              <div class="ev-title">${ev.title}</div>
-              <div class="ev-amt">${ev.amount !== null ? fmt(ev.amount) : (ev.note ? '<span style="font-family:var(--sans);color:var(--text2);font-size:11px;">' + ev.note + '</span>' : '—')}</div>
+              <div class="ev-body">
+                ${ev.note
+                  ? `<div class="ev-note-text">${ev.note}</div>`
+                  : `<div class="ev-title">${ev.title}</div>`}
+                ${ev.amount !== null ? `<div class="ev-amt">${fmt(ev.amount)}</div>` : ''}
+              </div>
             </div>`).join('')}
         </div>`;
     }).join('')}
