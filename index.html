@@ -471,10 +471,20 @@
     .ev-title {
       font-size: 13px;
       flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ev-note-text {
+      font-size: 12px;
+      color: var(--text2);
       overflow-wrap: break-word;
       word-break: break-word;
       white-space: normal;
+      flex: 1;
       min-width: 0;
+      line-height: 1.5;
     }
     .ev-amt { font-family: var(--mono); font-size: 12px; color: var(--gold); white-space: nowrap; flex-shrink: 0; }
 
@@ -1632,8 +1642,11 @@ async function renderDashboard() {
             <div class="ev-date">${fmtDate(ev.date)}</div>
             <div class="ev-src">${ev.source || ev.type}</div>
           </div>
-          <div class="ev-title">${ev.title}</div>
-          <div class="ev-amt">${ev.amount !== null ? fmt(ev.amount) : (ev.note ? '<span style="font-family:var(--sans);color:var(--text2);font-size:11px;">' + ev.note + '</span>' : '—')}</div>
+          ${ev.note && ev.amount === null
+            ? `<div class="ev-note-text">${ev.note}</div>`
+            : `<div class="ev-title">${ev.title}</div>
+               <div class="ev-amt">${ev.amount !== null ? fmt(ev.amount) : '—'}</div>`
+          }
         </div>`).join('')}
     </div>` : ''}
   `;
