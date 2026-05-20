@@ -449,7 +449,14 @@
     .range-active { background: var(--gold-dim) !important; border-color: var(--gold-dim) !important; color: #0a0a08 !important; }
 
     /* ── EVENTS ── */
-    .ev-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 30px; }
+    .ev-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 30px;
+      width: 100%;
+      min-width: 0;
+    }
     .ev-item {
       display: flex;
       align-items: flex-start;
@@ -458,14 +465,16 @@
       background: var(--surface);
       border-radius: 9px;
       border-left: 2px solid var(--border);
-      overflow: hidden;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
     .ev-item.dividend { border-left-color: var(--green); }
     .ev-item.purchase { border-left-color: var(--red); }
     .ev-item.sale     { border-left-color: var(--blue); }
     .ev-item.transfer { border-left-color: var(--gold-dim); }
     .ev-item.note     { border-left-color: var(--text3); }
-    .ev-meta { flex-shrink: 0; }
+    .ev-meta { flex-shrink: 0; width: 88px; }
     .ev-date { font-family: var(--mono); font-size: 11px; color: var(--text2); }
     .ev-src  { font-size: 10px; color: var(--text3); margin-top: 1px; }
     .ev-title {
@@ -477,13 +486,14 @@
       text-overflow: ellipsis;
     }
     .ev-note-text {
-      font-size: 12px;
-      color: var(--text2);
-      overflow-wrap: break-word;
+      font-size: 13px;
+      color: var(--text);
+      overflow-wrap: anywhere;
       word-break: break-word;
-      white-space: normal;
-      flex: 1;
+      white-space: pre-wrap;
+      flex: 1 1 0;
       min-width: 0;
+      max-width: 100%;
       line-height: 1.5;
     }
     .ev-amt { font-family: var(--mono); font-size: 12px; color: var(--gold); white-space: nowrap; flex-shrink: 0; }
